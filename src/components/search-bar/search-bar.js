@@ -1,17 +1,20 @@
-import React, {useState} from "react";
+import React, { useState } from "react";
 import InputBase from "@material-ui/core/InputBase";
 import { makeStyles } from "@material-ui/core/styles";
 import SearchIcon from "@material-ui/icons/Search";
 import Button from "@material-ui/core/Button";
 import { Grid } from "@material-ui/core";
-const API_KEY = process.env.REACT_APP_YOUTUBE_API_KEY
+import { connect } from "react-redux";
+import { fetchVideos } from "../../redux/actions/actions";
+
+const API_KEY = process.env.REACT_APP_YOUTUBE_API_KEY;
 
 const useStyles = makeStyles((theme) => ({
   root: {
     flexGrow: 1,
   },
   searchIcon: {
-    padding: '7px',
+    padding: "7px",
     position: "absolute",
     pointerEvents: "none",
     display: "flex",
@@ -32,39 +35,27 @@ const useStyles = makeStyles((theme) => ({
   },
   largeButton: {
     borderRadius: "20px",
-    width: '100%',
+    width: "100%",
   },
 }));
 
-export default function SearchBar(props) {
+function SearchBar(props) {
   const classes = useStyles();
-  const [search, setSearch] = useState('')
- 
+  const [search, setSearch] = useState("");
+
   function handleChange(e) {
-    setSearch(e.target.value)
+    setSearch(e.target.value);
   }
-  function handleSearch(e){
-      e.preventDefault();
-      console.log(search)
-      fetch(`https://youtube.googleapis.com/youtube/v3/search?part=snippet&q=${search}&key=${API_KEY}&type=video`)
-      .then((res) => res.json())
-      .then(data => {
-        console.log(data)
-      })
-      /* .then(data => {
-          const { Search, totalResults } = data
-          this.props.onResults(Search ? Search : [])
-      }) */
+  function handleSearch(e) {
+    e.preventDefault();
+    props.fetchVideos(search);
   }
 
   return (
     <div className={classes.root}>
       <form onSubmit={handleSearch}>
-        <Grid
-          container
-          spacing={3}
-        >
-          <Grid item sm={9} xs={12} >
+        <Grid container spacing={3}>
+          <Grid item sm={9} xs={12}>
             <div className={classes.searchIcon}>
               <SearchIcon />
             </div>
@@ -91,8 +82,15 @@ export default function SearchBar(props) {
               Search
             </Button>
           </Grid>
-          </Grid>
+        </Grid>
       </form>
     </div>
   );
 }
+const mapStateToProps = (state) => {
+  return {
+    videos: state.videos,
+  };
+};
+
+export default connect(mapStateToProps, {fetchVideos})(SearchBar);
