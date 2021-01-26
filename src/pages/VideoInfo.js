@@ -1,7 +1,13 @@
 import React from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import Grid from "@material-ui/core/Grid";
-import { Button, Card, CardMedia, CardContent, Typography } from "@material-ui/core";
+import {
+  Button,
+  Card,
+  CardMedia,
+  CardContent,
+  Typography,
+} from "@material-ui/core";
 import { ArrowBackIos } from "@material-ui/icons";
 import { connect } from "react-redux";
 import { Redirect } from "react-router-dom";
@@ -9,7 +15,7 @@ import InfoDetail from "../components/info-detail/info-detail";
 const useStyles = makeStyles((theme) => ({
   root: {
     flexGrow: 1,
-    overflow: "hidden"
+    overflow: "hidden",
   },
   grid: {
     padding: theme.spacing(5),
@@ -22,8 +28,11 @@ const useStyles = makeStyles((theme) => ({
   },
   videoImage: {
     width: "100%",
-    height: "auto",
+    height: "450px",
   },
+  videoImageInner : {
+    objectFit: "fill"
+  }
 }));
 
 function VideoInfo(props) {
@@ -47,12 +56,22 @@ function VideoInfo(props) {
               Go Back
             </Button>
           </Grid>
-          <Grid item xs={12} md={8}>
+          <Grid item xs={12} md={7}>
             <Card>
               <CardContent>
                 <div>
-                  <Typography gutterBottom variant="h4" className={classes.videoTitle}>Title: </Typography>
-                  <Typography gutterBottom variant="h6" className={classes.videoTitle}>
+                  <Typography
+                    gutterBottom
+                    variant="h4"
+                    className={classes.videoTitle}
+                  >
+                    Title:{" "}
+                  </Typography>
+                  <Typography
+                    gutterBottom
+                    variant="h6"
+                    className={classes.videoTitle}
+                  >
                     {props.selectedVideo.snippet.title}
                   </Typography>
                 </div>
@@ -61,11 +80,14 @@ function VideoInfo(props) {
                 alt={props.selectedVideo.snippet.title}
                 component="img"
                 image={props.selectedVideo.snippet.thumbnails.high.url}
-                className={classes.videoImage}
+                classes={{
+                  root: classes.videoImage,
+                  img: classes.videoImageInner,
+                }}
               />
             </Card>
           </Grid>
-          <Grid item xs={12} md={4}>
+          <Grid item xs={12} md={5}>
             <InfoDetail
               title={props.selectedVideo.snippet.title}
               description={props.selectedVideo.snippet.description}

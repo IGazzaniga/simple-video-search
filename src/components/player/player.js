@@ -9,7 +9,7 @@ const useStyles = makeStyles({
   root: {
     maxWidth: "100%",
     maxHeight: "100%",
-    height: "450px",
+    height: "600px",
     marginBottom: "25px"
   },
   playerContainer: {
