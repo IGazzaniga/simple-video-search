@@ -8,7 +8,7 @@ import MoreInfo from "../components/more-info/more-info";
 import { connect } from "react-redux";
 import { CircularProgress } from "@material-ui/core";
 import MuiAlert from "@material-ui/lab/Alert";
-import { Height, Visibility } from "@material-ui/icons";
+import { Visibility } from "@material-ui/icons";
 import { Skeleton } from "@material-ui/lab";
 
 function Alert(props) {
@@ -27,9 +27,14 @@ const useStyles = makeStyles((theme) => ({
   },
   loadingSkeleton: {
     width: "100%",
-    height: "450px"
-    
-  }
+    height: "450px",
+  },
+  relatedSkeleton: {
+    width: "100%",
+    maxWidth: "100%",
+    height: "145px",
+    marginBottom: theme.spacing(1),
+  },
 }));
 
 function SearchPage(props) {
@@ -49,13 +54,21 @@ function SearchPage(props) {
   if (props.loading) {
     videoErrorOrLoading = <CircularProgress />;
   } else if (props.noResults) {
-    videoErrorOrLoading = (
-      <h4>
+    videoErrorOrLoading = 
+      <Alert severity="warning">
         Your search didn't match any videos. Please, try with a different term.
-      </h4>
-    );
+      </Alert>
+    
   } else if (!props.hasSearched) {
-    videoErrorOrLoading = <Skeleton animation="wave" className={classes.loadingSkeleton} variant="rect"/>
+    videoErrorOrLoading = (
+      <Skeleton
+        animation="wave"
+        className={classes.loadingSkeleton}
+        variant="rect"
+      />
+    );
+  } else if (props.error) {
+    videoErrorOrLoading = <Alert severity="error">There was an error. Please, try again later</Alert>;
   } else {
     videoErrorOrLoading = (
       <div>
@@ -64,6 +77,14 @@ function SearchPage(props) {
       </div>
     );
   }
+  const relatedSkeleton = [...Array(3)].map((skeleton, i) => (
+    <Skeleton
+      animation="wave"
+      key={i}
+      className={classes.relatedSkeleton}
+      variant="rect"
+    />
+  ));
   return (
     <div className={classes.root}>
       <Grid className={classes.grid} container spacing={3}>
@@ -74,7 +95,7 @@ function SearchPage(props) {
           {videoErrorOrLoading}
         </Grid>
         <Grid item xs={12} sm={3}>
-          {props.videos.length > 0 ? related : <div></div>}
+          {props.videos.length > 0 ? related : relatedSkeleton}
           <Alert
             icon={<Visibility />}
             className={classes.watchedVideos}
@@ -94,6 +115,7 @@ const mapStateToProps = (state) => {
     noResults: state.videoReducer.noResults,
     hasSearched: state.videoReducer.hasSearched,
     watchedVideos: state.counterReducer.watchedVideos,
+    error: state.videoReducer.error,
   };
 };
 export default connect(mapStateToProps)(SearchPage);

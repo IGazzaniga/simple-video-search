@@ -41,7 +41,7 @@ export const videoReducer = (state = initialState, action) => {
         ...state,
         loading: false,
         videos: [],
-        error: action.payload,
+        error: action.payload.message,
       };
     default: return state
   }
