@@ -2,14 +2,33 @@ export const FETCH_VIDEOS_REQUEST = "FETCH_VIDEOS_REQUEST";
 export const FETCH_VIDEOS_SUCCESS = "FETCH_VIDEOS_SUCCESS";
 export const FETCH_VIDEOS_FAILURE = "FETCH_VIDEOS_FAILURE";
 export const SELECT_VIDEO = "SELECT_VIDEO";
-const API_KEY = process.env.REACT_APP_YOUTUBE_API_KEY
+export const INCREMENT_COUNTER = "INCREMENT_COUNTER";
 
+const API_KEY = process.env.REACT_APP_YOUTUBE_API_KEY;
+
+export const incrementCounter = () => {
+  return {
+    type: INCREMENT_COUNTER,
+  };
+};
+export const playVideo = () => {
+  return function (dispatch) {
+    dispatch(incrementCounter());
+  };
+};
 export const selectVideo = (video) => {
   return {
     type: SELECT_VIDEO,
     video,
   };
 };
+
+export const changeMainVideo = (video) => {
+  return function (dispatch) {
+    dispatch(selectVideo(video))
+  };
+};
+
 export const fetchVideosRequest = () => {
   return {
     type: FETCH_VIDEOS_REQUEST,
@@ -45,4 +64,3 @@ export const fetchVideos = (search) => {
       });
   };
 };
-

@@ -1,19 +1,24 @@
 import React from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import Grid from "@material-ui/core/Grid";
-import { Button } from "@material-ui/core";
+import { Button, Card, CardMedia, CardContent, Typography } from "@material-ui/core";
 import { ArrowBackIos } from "@material-ui/icons";
 import { connect } from "react-redux";
 import { Redirect } from "react-router-dom";
+import InfoDetail from "../components/info-detail/info-detail";
 const useStyles = makeStyles((theme) => ({
   root: {
     flexGrow: 1,
+    overflow: "hidden"
   },
   grid: {
     padding: theme.spacing(5),
   },
   backButton: {
     margin: "10px",
+  },
+  videoTitle: {
+    display: "inline",
   },
   videoImage: {
     width: "100%",
@@ -29,32 +34,44 @@ function VideoInfo(props) {
   }
   return (
     <div className={classes.root}>
-      {props.selectedVideo != "" ? (
+      {props.selectedVideo !== "" ? (
         <Grid className={classes.grid} container spacing={3}>
           <Grid item sm={12}>
             <Button
               className={classes.backButton}
               variant="contained"
-              color="primary"
               size="large"
               startIcon={<ArrowBackIos />}
               onClick={goBack}
             >
               Go Back
             </Button>
-            <h3>Title:{props.selectedVideo.snippet.title}</h3>
           </Grid>
-          <Grid item xs={12} md={9}>
-            <img
-              className={classes.videoImage}
-              src={props.selectedVideo.snippet.thumbnails.high.url}
+          <Grid item xs={12} md={8}>
+            <Card>
+              <CardContent>
+                <div>
+                  <Typography gutterBottom variant="h4" className={classes.videoTitle}>Title: </Typography>
+                  <Typography gutterBottom variant="h6" className={classes.videoTitle}>
+                    {props.selectedVideo.snippet.title}
+                  </Typography>
+                </div>
+              </CardContent>
+              <CardMedia
+                alt={props.selectedVideo.snippet.title}
+                component="img"
+                image={props.selectedVideo.snippet.thumbnails.high.url}
+                className={classes.videoImage}
+              />
+            </Card>
+          </Grid>
+          <Grid item xs={12} md={4}>
+            <InfoDetail
+              title={props.selectedVideo.snippet.title}
+              description={props.selectedVideo.snippet.description}
+              channel={props.selectedVideo.snippet.channelTitle}
+              publishedAt={props.selectedVideo.snippet.publishedAt}
             />
-          </Grid>
-          <Grid item xs={12} md={3}>
-            <h3>Title</h3><p>{props.selectedVideo.snippet.title}</p>
-            <h3>Description</h3><p>{props.selectedVideo.snippet.description}</p>
-            <h3>Channel</h3><p>{props.selectedVideo.snippet.channelTitle}</p>
-            <h3>Published at</h3><p>{props.selectedVideo.snippet.publishedAt}</p>
           </Grid>
         </Grid>
       ) : (
@@ -65,7 +82,7 @@ function VideoInfo(props) {
 }
 const mapStateToProps = (state) => {
   return {
-    selectedVideo: state.selectedVideo,
+    selectedVideo: state.videoReducer.selectedVideo,
   };
 };
 

@@ -1,6 +1,6 @@
 import React from "react";
 import { makeStyles } from "@material-ui/core/styles";
-import { BrowserRouter as Router, Link as RouterLink } from "react-router-dom";
+import { Link as RouterLink } from "react-router-dom";
 import Card from "@material-ui/core/Card";
 import Button from "@material-ui/core/Button";
 import { connect } from "react-redux";
@@ -15,6 +15,15 @@ const useStyles = makeStyles({
     display: "inline",
     margin: "10px",
   },
+  moreInfoButton: {
+    backgroundColor: "#2196f3",
+    color: "#fff",
+    "&:hover": {
+      backgroundColor: "#2196f3",
+      cursor: "pointer",
+      opacity: "0.9",
+    },
+  }
 });
 
 function MoreInfo(props) {
@@ -24,14 +33,14 @@ function MoreInfo(props) {
     <Card className={classes.root}>
       <p className={classes.inlineTitle}>
         <b>The name of the video:</b>{" "}
-        {props.selectedVideo != "" ? props.selectedVideo.snippet.title : " "}
+        {props.selectedVideo !== "" ? props.selectedVideo.snippet.title : " "}
       </p>
       <Button
         variant="contained"
-        color="primary"
+        className={classes.moreInfoButton}
         component={RouterLink}
         to={
-          props.selectedVideo != ""
+          props.selectedVideo !== ""
             ? `/info/${props.selectedVideo.id.videoId}`
             : ""
         }
@@ -43,7 +52,7 @@ function MoreInfo(props) {
 }
 const mapStateToProps = (state) => {
   return {
-    selectedVideo: state.selectedVideo,
+    selectedVideo: state.videoReducer.selectedVideo,
   };
 };
 

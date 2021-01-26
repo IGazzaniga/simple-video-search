@@ -7,8 +7,6 @@ import { Grid } from "@material-ui/core";
 import { connect } from "react-redux";
 import { fetchVideos } from "../../redux/actions/actions";
 
-const API_KEY = process.env.REACT_APP_YOUTUBE_API_KEY;
-
 const useStyles = makeStyles((theme) => ({
   root: {
     flexGrow: 1,
@@ -36,6 +34,13 @@ const useStyles = makeStyles((theme) => ({
   largeButton: {
     borderRadius: "20px",
     width: "100%",
+    backgroundColor: "#2196f3",
+    color: "#fff",
+    "&:hover": {
+      backgroundColor: "#2196f3",
+      cursor: "pointer",
+      opacity: "0.9",
+    },
   },
 }));
 
@@ -48,6 +53,7 @@ function SearchBar(props) {
   }
   function handleSearch(e) {
     e.preventDefault();
+    if (search.trim() === '') return
     props.fetchVideos(search);
   }
 
@@ -77,7 +83,6 @@ function SearchBar(props) {
               className={classes.largeButton}
               size="large"
               variant="contained"
-              color="primary"
             >
               Search
             </Button>
@@ -89,7 +94,7 @@ function SearchBar(props) {
 }
 const mapStateToProps = (state) => {
   return {
-    videos: state.videos,
+    videos: state.videoReducer.videos,
   };
 };
 

@@ -2,41 +2,86 @@ import React from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import Grid from "@material-ui/core/Grid";
 import SearchBar from "../components/search-bar/search-bar";
-import ImgMediaCard from "../components/related/related";
+import Related from "../components/related/related";
 import VideoPlayer from "../components/player/player";
 import MoreInfo from "../components/more-info/more-info";
 import { connect } from "react-redux";
+import { CircularProgress } from "@material-ui/core";
+import MuiAlert from "@material-ui/lab/Alert";
+import { Height, Visibility } from "@material-ui/icons";
+import { Skeleton } from "@material-ui/lab";
+
+function Alert(props) {
+  return <MuiAlert elevation={6} variant="filled" {...props} />;
+}
 const useStyles = makeStyles((theme) => ({
   root: {
     flexGrow: 1,
+    overflow: "hidden",
   },
   grid: {
     padding: theme.spacing(5),
+  },
+  watchedVideos: {
+    marginTop: "20px",
+  },
+  loadingSkeleton: {
+    width: "100%",
+    height: "450px"
+    
   }
 }));
 
 function SearchPage(props) {
   const classes = useStyles();
-  const related = props.videos.slice(1).map((video) => (
-    <ImgMediaCard
-      image={video.snippet.thumbnails.high.url}
-      key={video.id.videoId}
-      text={video.snippet.title}
-    >
-    </ImgMediaCard>
-  ));
+  const related = props.videos
+    .slice(1)
+    .map((video) => (
+      <Related
+        image={video.snippet.thumbnails.high.url}
+        key={video.id.videoId}
+        text={video.snippet.title}
+        url={video.id.videoId}
+        fullVideoInfo={video}
+      ></Related>
+    ));
+  var videoErrorOrLoading;
+  if (props.loading) {
+    videoErrorOrLoading = <CircularProgress />;
+  } else if (props.noResults) {
+    videoErrorOrLoading = (
+      <h4>
+        Your search didn't match any videos. Please, try with a different term.
+      </h4>
+    );
+  } else if (!props.hasSearched) {
+    videoErrorOrLoading = <Skeleton animation="wave" className={classes.loadingSkeleton} variant="rect"/>
+  } else {
+    videoErrorOrLoading = (
+      <div>
+        <VideoPlayer />
+        <MoreInfo />
+      </div>
+    );
+  }
   return (
     <div className={classes.root}>
       <Grid className={classes.grid} container spacing={3}>
         <Grid item xs={12}>
           <SearchBar placeholder="Search.." />
         </Grid>
-        <Grid item xs={12} sm={9}>
-          <VideoPlayer />
-          <MoreInfo />
+        <Grid container direction="column" item xs={12} sm={9}>
+          {videoErrorOrLoading}
         </Grid>
         <Grid item xs={12} sm={3}>
           {props.videos.length > 0 ? related : <div></div>}
+          <Alert
+            icon={<Visibility />}
+            className={classes.watchedVideos}
+            severity="info"
+          >
+            Videos watched: {props.watchedVideos}
+          </Alert>
         </Grid>
       </Grid>
     </div>
@@ -44,7 +89,11 @@ function SearchPage(props) {
 }
 const mapStateToProps = (state) => {
   return {
-    videos: state.videos,
+    videos: state.videoReducer.videos,
+    loading: state.videoReducer.loading,
+    noResults: state.videoReducer.noResults,
+    hasSearched: state.videoReducer.hasSearched,
+    watchedVideos: state.counterReducer.watchedVideos,
   };
 };
 export default connect(mapStateToProps)(SearchPage);
